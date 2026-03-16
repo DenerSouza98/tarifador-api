@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: tarifador-api
+
+  datasource:
+    url: jdbc:h2:mem:tarifador;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+server:
+  address: 0.0.0.0
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,loggers
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://172.25.108.146:9411/api/v2/spans
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
