@@ -1,6 +1,7 @@
 package br.com.seguros.tarifador.infrastructure.web.dto;
 
 import br.com.seguros.tarifador.domain.model.Categoria;
+import br.com.seguros.tarifador.infrastructure.persistence.ProductMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductRequestTest {
 
     private static Validator validator;
+    private final ProductMapper mapper = new ProductMapper();
 
     @BeforeAll
     static void setUp() {
@@ -55,7 +57,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nome")));
     }
 
     @Test
@@ -67,7 +69,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nome")));
     }
 
     @Test
@@ -79,7 +81,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nome")));
     }
 
     @Test
@@ -91,7 +93,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nome")));
     }
 
     @Test
@@ -103,7 +105,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nome")));
     }
 
     @Test
@@ -137,7 +139,7 @@ class ProductRequestTest {
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("category")));
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("categoria")));
     }
 
     @Test
@@ -148,8 +150,8 @@ class ProductRequestTest {
         req.setPrecoBase(null);
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
-        assertFalse(violations.isEmpty(), "Deveria rejeitar basePrice nulo");
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("basePrice")),
+        assertFalse(violations.isEmpty(), "Deveria rejeitar precoBase nulo");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("precoBase")),
                 "Deveria ter violação em basePrice");
     }
 
@@ -161,9 +163,9 @@ class ProductRequestTest {
         req.setPrecoBase(BigDecimal.ZERO);
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
-        assertFalse(violations.isEmpty(), "Deveria rejeitar basePrice zero");
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("basePrice")),
-                "Deveria ter violação em basePrice");
+        assertFalse(violations.isEmpty(), "Deveria rejeitar precoBase zero");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("precoBase")),
+                "Deveria ter violação em precoBase");
     }
 
     @Test
@@ -174,9 +176,9 @@ class ProductRequestTest {
         req.setPrecoBase(new BigDecimal("-10.00"));
 
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
-        assertFalse(violations.isEmpty(), "Deveria rejeitar basePrice negativo");
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("basePrice")),
-                "Deveria ter violação em basePrice");
+        assertFalse(violations.isEmpty(), "Deveria rejeitar precoBase negativo");
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("precoBase")),
+                "Deveria ter violação em precoBase");
     }
 
     @Test
@@ -214,4 +216,15 @@ class ProductRequestTest {
         Set<ConstraintViolation<ProductRequest>> violations = validator.validate(req);
         assertTrue(violations.isEmpty());
     }
+
+    @Test
+    void toEntityDeveRetornarNullQuandoDomainForNull() {
+        assertNull(mapper.toEntity(null));
+    }
+
+    @Test
+    void toDomainDeveRetornarNullQuandoEntityForNull() {
+        assertNull(mapper.toDomain(null));
+    }
+
 }

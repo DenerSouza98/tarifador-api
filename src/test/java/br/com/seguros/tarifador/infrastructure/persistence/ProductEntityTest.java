@@ -61,4 +61,39 @@ class ProductEntityTest {
         assertEquals(tariff, entity.getPrecoTarifado());
     }
 
+    @Test
+    void deveCompararEntitiesComMesmoId() {
+        UUID id = UUID.randomUUID();
+        ProductEntity e1 = new ProductEntity();
+        e1.setId(id);
+
+        ProductEntity e2 = new ProductEntity();
+        e2.setId(id);
+
+        assertEquals(e1.getId(), e2.getId()); // compara os valores, não os objetos
+    }
+
+
+    @Test
+    void deveDiferenciarEntitiesComIdsDiferentes() {
+        ProductEntity e1 = new ProductEntity();
+        e1.setId(UUID.randomUUID());
+
+        ProductEntity e2 = new ProductEntity();
+        e2.setId(UUID.randomUUID());
+
+        assertNotEquals(e1, e2);
+    }
+
+    @Test
+    void deveGerarToStringComCampos() {
+        ProductEntity entity = new ProductEntity();
+        entity.setNome("Seguro Vida");
+        String toString = entity.toString();
+
+        assertNotNull(toString);
+        assertTrue(toString.contains("ProductEntity"));
+    }
+
+
 }
