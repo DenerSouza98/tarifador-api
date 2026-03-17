@@ -79,7 +79,7 @@ class ProductControllerTest {
         Product produto = new Product(UUID.randomUUID(), req.getNome(), req.getCategoria(), req.getPrecoBase(), new BigDecimal("103.20"));
         Mockito.when(service.createProduct(any())).thenReturn(produto);
 
-        ProductResponse resp = controller.creatadProduct(req);
+        ProductResponse resp = controller.createProduct(req);
 
         assertEquals("Seguro Vida", resp.nome());
         assertEquals(Categoria.VIDA, resp.categoria());

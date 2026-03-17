@@ -4,8 +4,10 @@ import br.com.seguros.tarifador.application.service.PricingService;
 import br.com.seguros.tarifador.domain.model.Product;
 import br.com.seguros.tarifador.infrastructure.web.dto.ProductRequest;
 import br.com.seguros.tarifador.infrastructure.web.dto.ProductResponse;
+import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.tracing.annotation.NewSpan;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,9 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResponse creatadProduct(@Valid @RequestBody ProductRequest req) {
+    @Timed(value = "controller.create", description = "Tempo gasto para criar produto via API")
+    @NewSpan("createProductAPI")
+    public ProductResponse createProduct(@Valid @RequestBody ProductRequest req) {
         log.debug("Recebida requisição para criar produto: nome={}, categoria={}, precoBase={}",
                 req.getNome(), req.getCategoria(), req.getPrecoBase());
         Product newProduct = new Product(null, req.getNome(), req.getCategoria(), req.getPrecoBase(), null);
@@ -45,6 +49,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Timed(value = "controller.update", description = "Tempo gasto para atualizar produto via API")
     public ProductResponse updateProduct(@PathVariable UUID id, @Valid @RequestBody ProductRequest req) {
         log.debug("Recebida requisição para atualizar produto: id={}, nome={}, categoria={}, precoBase={}",
                 id, req.getNome(), req.getCategoria(), req.getPrecoBase());
@@ -54,21 +59,27 @@ public class ProductController {
         return toResponse(salvo);
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable UUID id) {
-        log.debug("Recebida requisição para deletar produto: id={}", id);
-        service.deleteProduct(id);
-    }
-
     @GetMapping("/{id}")
+    @Timed(value = "controller.search", description = "Tempo gasto para buscar produto via API")
+    @NewSpan("searchProductAPI")
     public ProductResponse searchProduct(@PathVariable UUID id) {
         return toResponse(service.searchProduct(id));
     }
 
     @GetMapping
+    @Timed(value = "controller.list", description = "Tempo gasto para listar produtos via API")
+    @NewSpan("listProductAPI")
     public List<ProductResponse> listProduct() {
         return service.listProduct().stream().map(this::toResponse).toList();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Timed(value = "controller.delete", description = "Tempo gasto para deletar produto via API")
+    @NewSpan("deleteProductAPI")
+    public void deleteProduct(@PathVariable UUID id) {
+        log.debug("Recebida requisição para deletar produto: id={}", id);
+        service.deleteProduct(id);
     }
 
     private ProductResponse toResponse(Product p) {

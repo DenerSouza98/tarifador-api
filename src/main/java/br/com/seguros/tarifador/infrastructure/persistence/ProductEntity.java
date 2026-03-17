@@ -1,7 +1,6 @@
 package br.com.seguros.tarifador.infrastructure.persistence;
 
 import br.com.seguros.tarifador.domain.model.Categoria;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
